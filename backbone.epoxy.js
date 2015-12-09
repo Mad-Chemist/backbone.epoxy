@@ -1262,8 +1262,33 @@
     // parsing function is invoked with 'filters' and 'context' properties made available,
     // yeilds a native context object with element-specific bindings defined.
     try {
-      var parserFunct = bindingCache[declarations] || (bindingCache[declarations] = new Function('$f','$c','with($f){with($c){return{'+ declarations +'}}}'));
-      var bindings = parserFunct(filters, context);
+      var parserFunct = bindingCache[declarations] || (bindingCache[declarations] = function($f, $c, declarations) {
+        var result = {};
+        var pairs = declarations.split(/,(?=[^\]]*(?:\[|$))/);
+        pairs.forEach(function(item) {
+          var value = "";
+          var split = item.split(":");
+          if (split.length < 2) {
+            throw new Error("Declaration is in an invalid format");
+          }
+          if ($f[$c] !== undefined && $f[$c][split[1]]) {
+            value = $f[$c][split[1]];
+          }
+          else if ($c[split[1]]) {
+            value =  $c[split[1]];
+          }
+          else if ($f[split[1]]) {
+            value =  $f[split[1]];
+          }
+          else {
+            value = eval(split[1]);
+          }
+          var key = split[0];
+          result[key] = value;
+        });
+        return result;
+      });
+      var bindings = parserFunct(filters, context, declarations);
     } catch (error) {
       throw('Error parsing bindings: "'+declarations +'"\n>> '+error);
     }
