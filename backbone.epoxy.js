@@ -1267,6 +1267,9 @@
         var pairs = declarations.split(/,((?=[^\]]*(?:\[|$))+(?=[^\}]*(?:\{|$)))/);
         pairs.forEach(function(item) {
           var value = "";
+          if (item.trim().length === 0) {
+            return;
+          }
           var split = item.split(":");
           if (split.length < 2) {
             throw new Error("Declaration is in an invalid format");
