@@ -1264,7 +1264,7 @@
     try {
       var parserFunct = bindingCache[declarations] || (bindingCache[declarations] = function($f, $c, declarations) {
         var result = {};
-        var pairs = declarations.split(/,(?=[^\]]*(?:\[|$))/);
+        var pairs = declarations.split(/,((?=[^\]]*(?:\[|$))+(?=[^\}]*(?:\{|$)))/);
         pairs.forEach(function(item) {
           var value = "";
           var split = item.split(":");
